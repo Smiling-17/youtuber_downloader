@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>YouTube Downloader</title>
+
+  <!-- Google Font -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    :root {
+      --primary: #A3D5FF; /* pastel xanh da trời chủ đạo */
+      --accent1: #FFB3BA; /* pastel hồng */
+      --accent2: #BFFCC6; /* pastel xanh lá nhạt */
+      --accent3: #FFF6B3; /* pastel vàng nhạt */
+      --bg: #F0F8FF;      /* AliceBlue nền */
+      --text: #333;
+      --card: #fff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 60px auto;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 30px 25px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      position: relative;
+      overflow: hidden;
+    }
+    .container::before {
+      content: "";
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle at center, var(--primary) 0%, transparent 70%);
+      opacity: 0.3;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .logo {
+      width: 50px;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    header h1 {
+      display: inline-block;
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 28px;
+      vertical-align: middle;
+    }
+
+    label[for="url"] {
+      display: block;
+      margin-top: 16px;
+      font-weight: 500;
+    }
+    #url {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 6px;
+      font-size: 14px;
+      background: #FFF;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .radio-group input[type="radio"] {
+      display: none;
+    }
+    .radio-group label {
+      flex: 1;
+      text-align: center;
+      padding: 12px 0;
+      border: 2px solid rgba(0,0,0,0.1);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      font-weight: 500;
+      user-select: none;
+    }
+    /* Khi input được check, chọn màu cho label đi kèm */
+    #mode-audio:checked + label[for="mode-audio"] {
+      background: var(--accent1);
+      border-color: var(--accent1);
+      color: #fff;
+    }
+    #mode-video_only:checked + label[for="mode-video_only"] {
+      background: var(--accent2);
+      border-color: var(--accent2);
+      color: #fff;
+    }
+    #mode-video_audio:checked + label[for="mode-video_audio"] {
+      background: var(--accent3);
+      border-color: var(--accent3);
+      color: #fff;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 24px;
+      background: var(--primary);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #86C9FF;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 14px;
+      color: #777;
+    }
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+      <h1>YouTube Downloader</h1>
+    </header>
+
+    <form method="post">
+      <label for="url">URL YouTube</label>
+      <input type="url" id="url" name="url" placeholder="https://www.youtube.com/..." required>
+
+      <div class="radio-group">
+        <input type="radio" id="mode-audio"       name="mode" value="audio" checked>
+        <label for="mode-audio">Audio</label>
+
+        <input type="radio" id="mode-video_only"  name="mode" value="video_only">
+        <label for="mode-video_only">Video only</label>
+
+        <input type="radio" id="mode-video_audio" name="mode" value="video_audio">
+        <label for="mode-video_audio">Video + Audio</label>
+      </div>
+
+      <button type="submit">Tiếp tục</button>
+    </form>
+  </div>
+
+  <div class="footer">
+    © 2025 – <a href="https://github.com/YourUsername/yt-downloader-web" target="_blank">YourProjectName</a>
+  </div>
+</body>
+</html>

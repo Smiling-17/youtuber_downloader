@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Chọn định dạng Audio</title>
+
+  <!-- Google Font -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    :root {
+      --primary: #A3D5FF;
+      --accent1: #FFB3BA;
+      --accent2: #BFFCC6;
+      --accent3: #FFF6B3;
+      --bg: #F0F8FF;
+      --text: #333;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 500px;
+      margin: 60px auto;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 30px 25px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      position: relative;
+    }
+    .container::before {
+      content: "";
+      position: absolute;
+      bottom: -80px; left: -80px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle at center, var(--primary) 0%, transparent 70%);
+      opacity: 0.25;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .logo {
+      width: 50px;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    header h1 {
+      display: inline-block;
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 24px;
+      vertical-align: middle;
+    }
+
+    ul {
+      list-style: none;
+      margin: 20px 0;
+      padding: 0;
+    }
+    ul li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    /* xen kẽ pastel */
+    ul li:nth-child(3n+1) { background: var(--accent1); }
+    ul li:nth-child(3n+2) { background: var(--accent2); }
+    ul li:nth-child(3n)   { background: var(--accent3); }
+
+    ul li span:first-child { color: #444; }
+    ul li strong { font-weight: 600; color: #222; }
+
+    form {
+      margin-top: 20px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #86C9FF;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 14px;
+    }
+    .back-link a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+      <h1>Chọn định dạng Audio</h1>
+    </header>
+
+    <ul>
+      {% for f in fmts %}
+      <li>
+        <span>{{ f.format_id }}.{{ f.ext }}</span>
+        <strong>{{ f.bitrate }} kbps</strong>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <form method="post">
+      <input type="hidden" name="url" value="{{ url }}">
+      <input type="hidden" name="mode" value="audio">
+      <input type="hidden" name="download_audio" value="1">
+      <button type="submit">Tải audio chất lượng cao nhất</button>
+    </form>
+
+    <p class="back-link">
+      <a href="{{ url_for('index') }}">← Quay về trang chủ</a>
+    </p>
+  </div>
+</body>
+</html>
