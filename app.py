@@ -13,9 +13,21 @@ def sanitize(s):
 
 def extract_info(url, cookiefile=None):
     """Lấy metadata (skip download), có thể dùng cookie."""
-    opts = {'skip_download': True}
+    opts = {
+        'skip_download': True,
+        'user_agent': (
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+            'AppleWebKit/537.36 (KHTML, like Gecko) '
+            'Chrome/114.0.0.0 Safari/537.36'
+        ),
+        # hạn chế tốc độ request để tránh 429
+        'ratelimit': '1M',
+        'sleep_interval': 1,
+        'max_sleep_interval': 3,
+    }
     if cookiefile:
         opts['cookiefile'] = cookiefile
+
     with YoutubeDL(opts) as ydl:
         return ydl.extract_info(url, download=False)
 
@@ -54,7 +66,19 @@ def download_media(url, mode, cookiefile=None):
     else:
         fmt, merge = 'bestvideo[ext=mp4]+bestaudio/best', True
 
-    opts = {'format': fmt, 'outtmpl': outtmpl, 'noplaylist': noplay}
+    opts = {
+        'format': fmt,
+        'outtmpl': outtmpl,
+        'noplaylist': noplay,
+        'user_agent': (
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+            'AppleWebKit/537.36 (KHTML, like Gecko) '
+            'Chrome/114.0.0.0 Safari/537.36'
+        ),
+        'ratelimit': '1M',
+        'sleep_interval': 1,
+        'max_sleep_interval': 3,
+    }
     if merge:
         opts['merge_output_format'] = 'mp4'
     if cookiefile:
@@ -63,7 +87,7 @@ def download_media(url, mode, cookiefile=None):
     with YoutubeDL(opts) as ydl:
         ydl.download([url])
 
-    # Trả file hoặc zip
+    # trả file hoặc zip
     if not is_playlist:
         file = os.listdir(folder)[0]
         return os.path.join(folder, file)
@@ -73,19 +97,19 @@ def download_media(url, mode, cookiefile=None):
 @app.route('/', methods=['GET','POST'])
 def index():
     if request.method == 'POST':
-        url  = request.form.get('url', '').strip()
+        url = request.form.get('url','').strip()
         mode = request.form.get('mode')
 
-        # Lưu tạm cookie nếu có upload
+        # Lưu cookie upload (nếu có)
         cookiefile = None
-        uploaded = request.files.get('cookiefile')
-        if uploaded and uploaded.filename:
+        u = request.files.get('cookiefile')
+        if u and u.filename:
             tmpdir = tempfile.mkdtemp()
-            fname = secure_filename(uploaded.filename)
-            cookiefile = os.path.join(tmpdir, fname)
-            uploaded.save(cookiefile)
+            fn = secure_filename(u.filename)
+            cookiefile = os.path.join(tmpdir, fn)
+            u.save(cookiefile)
 
-        # Bước 1: liệt kê định dạng audio nếu cần
+        # Bước 1: list audio formats
         if mode == 'audio' and 'download_audio' not in request.form:
             try:
                 info = extract_info(url, cookiefile)
@@ -94,21 +118,19 @@ def index():
                 return f"Error: {e}", 500
             return render_template('audio_formats.html', url=url, fmts=fmts)
 
-        # Bước 2: thực download
+        # Bước 2: download thật sự
         try:
             result = download_media(url, mode, cookiefile)
-            filename = os.path.basename(result)
-            return send_file(result, as_attachment=True, download_name=filename)
+            fname = os.path.basename(result)
+            return send_file(result, as_attachment=True, download_name=fname)
         except Exception as e:
             return f"Error khi tải: {e}", 500
         finally:
-            # Cleanup cookie tmpdir
             if cookiefile:
                 shutil.rmtree(os.path.dirname(cookiefile), ignore_errors=True)
 
     return render_template('index.html')
 
 if __name__ == '__main__':
-    # Port do Render gán vào biến môi trường PORT
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
